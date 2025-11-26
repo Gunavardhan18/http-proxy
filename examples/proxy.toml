@@ -1,0 +1,82 @@
+[server]
+  host = "localhost"
+  port = 8080
+  read_timeout = "30s"
+  write_timeout = "30s"
+  idle_timeout = "2m0s"
+  max_header_bytes = 1048576
+
+[backend]
+  host = "localhost"
+  port = 8090
+  timeout = "30s"
+  [backend.health_check]
+    enabled = true
+    interval = "30s"
+    timeout = "5s"
+    path = "/health"
+
+[rules]
+  default_action = "allow"
+  watch_rules_file = true
+  reload_interval = "5s"
+
+  [[rules.rules]]
+    id = "default-allow-all"
+    name = "Allow all requests by default"
+    description = "Default rule to allow all requests"
+    type = "url"
+    operator = "wildcard"
+    value = "*"
+    action = "allow"
+    priority = 1000
+    enabled = true
+
+  [[rules.rules]]
+    id = "block-admin-paths"
+    name = "Block admin paths"
+    description = "Block access to admin endpoints"
+    type = "url"
+    operator = "starts_with"
+    value = "/admin"
+    action = "block"
+    priority = 100
+    enabled = true
+
+  [[rules.rules]]
+    id = "block-large-requests"
+    name = "Block large requests"
+    description = "Block requests larger than 10MB"
+    type = "size"
+    operator = "gte"
+    value = ""
+    action = "block"
+    priority = 200
+    enabled = true
+    min_size = 10485760
+
+  [[rules.rules]]
+    id = "block-bad-user-agents"
+    name = "Block suspicious user agents"
+    description = "Block requests from known bad user agents"
+    type = "user_agent"
+    operator = "contains"
+    value = "bot"
+    action = "block"
+    priority = 300
+    enabled = false
+
+[logging]
+  level = "info"
+  max_size = 100
+  max_backups = 3
+  max_age = 28
+  compress = true
+  audit_enabled = true
+
+[security]
+  [security.rate_limiting]
+    enabled = false
+    requests_per_sec = 100
+    burst_size = 10
+    cleanup_interval = "1m0s"

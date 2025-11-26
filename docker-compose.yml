@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # Backend server for testing
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./backend"]
+    ports:
+      - "8090:8090"
+    environment:
+      - BACKEND_PORT=8090
+      - BACKEND_DELAY_MIN=10ms
+      - BACKEND_DELAY_MAX=100ms
+      - BACKEND_ERROR_RATE=0.02
+      - BACKEND_ENABLE_LOGGING=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8090/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - proxy-network
+
+  # HTTP Proxy server
+  proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./proxy", "-config", "examples/proxy.yaml"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    volumes:
+      - ./logs:/app/logs
+      - ./examples:/app/config:ro
+    environment:
+      - PROXY_LOG_LEVEL=info
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/proxy/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    networks:
+      - proxy-network
+    restart: unless-stopped
+
+  # Traffic generator (optional, for testing)
+  traffic-gen:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["sleep", "infinity"]  # Keep container running for manual testing
+    depends_on:
+      - proxy
+    networks:
+      - proxy-network
+    profiles:
+      - testing
+
+  # Log viewer (optional)
+  logs:
+    image: busybox
+    command: ["tail", "-f", "/logs/proxy.log"]
+    volumes:
+      - ./logs:/logs:ro
+    depends_on:
+      - proxy
+    profiles:
+      - monitoring
+
+networks:
+  proxy-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local

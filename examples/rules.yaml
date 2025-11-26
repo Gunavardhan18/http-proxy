@@ -1,0 +1,47 @@
+rules:
+    - id: block-admin
+      name: Block Admin Access
+      description: Block access to admin endpoints
+      type: url
+      operator: starts_with
+      value: /admin
+      action: block
+      priority: 100
+      enabled: true
+    - id: block-large-uploads
+      name: Block Large Uploads
+      description: Block uploads larger than 50MB
+      type: size
+      operator: gte
+      value: ""
+      action: block
+      priority: 200
+      enabled: true
+      min_size: 52428800
+    - id: block-suspicious-uas
+      name: Block Suspicious User Agents
+      description: Block requests from suspicious user agents
+      type: user_agent
+      operator: regex
+      value: (?i)(bot|crawler|spider|scraper)
+      action: block
+      priority: 300
+      enabled: false
+    - id: allow-health-checks
+      name: Allow Health Checks
+      description: Always allow health check endpoints
+      type: url
+      operator: equals
+      value: /health
+      action: allow
+      priority: 50
+      enabled: true
+    - id: block-private-networks
+      name: Block Private Network Access
+      description: Block requests from private network ranges
+      type: ipv4
+      operator: in_range
+      value: 192.168.0.0/16
+      action: block
+      priority: 150
+      enabled: false

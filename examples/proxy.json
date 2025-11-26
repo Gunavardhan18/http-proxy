@@ -1,0 +1,89 @@
+{
+  "server": {
+    "host": "localhost",
+    "port": 8080,
+    "read_timeout": 30000000000,
+    "write_timeout": 30000000000,
+    "idle_timeout": 120000000000,
+    "max_header_bytes": 1048576
+  },
+  "backend": {
+    "host": "localhost",
+    "port": 8090,
+    "timeout": 30000000000,
+    "health_check": {
+      "enabled": true,
+      "interval": 30000000000,
+      "timeout": 5000000000,
+      "path": "/health"
+    }
+  },
+  "rules": {
+    "rules": [
+      {
+        "id": "default-allow-all",
+        "name": "Allow all requests by default",
+        "description": "Default rule to allow all requests",
+        "type": "url",
+        "operator": "wildcard",
+        "value": "*",
+        "action": "allow",
+        "priority": 1000,
+        "enabled": true
+      },
+      {
+        "id": "block-admin-paths",
+        "name": "Block admin paths",
+        "description": "Block access to admin endpoints",
+        "type": "url",
+        "operator": "starts_with",
+        "value": "/admin",
+        "action": "block",
+        "priority": 100,
+        "enabled": true
+      },
+      {
+        "id": "block-large-requests",
+        "name": "Block large requests",
+        "description": "Block requests larger than 10MB",
+        "type": "size",
+        "operator": "gte",
+        "value": "",
+        "action": "block",
+        "priority": 200,
+        "enabled": true,
+        "min_size": 10485760
+      },
+      {
+        "id": "block-bad-user-agents",
+        "name": "Block suspicious user agents",
+        "description": "Block requests from known bad user agents",
+        "type": "user_agent",
+        "operator": "contains",
+        "value": "bot",
+        "action": "block",
+        "priority": 300,
+        "enabled": false
+      }
+    ],
+    "default_action": "allow",
+    "watch_rules_file": true,
+    "reload_interval": 5000000000
+  },
+  "logging": {
+    "level": "info",
+    "max_size": 100,
+    "max_backups": 3,
+    "max_age": 28,
+    "compress": true,
+    "audit_enabled": true
+  },
+  "security": {
+    "rate_limiting": {
+      "enabled": false,
+      "requests_per_sec": 100,
+      "burst_size": 10,
+      "cleanup_interval": 60000000000
+    }
+  }
+}

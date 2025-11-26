@@ -1,0 +1,42 @@
+# Binaries
+proxy
+proxy.exe
+backend
+backend.exe
+traffic-gen
+traffic-gen.exe
+config-gen
+config-gen.exe
+
+# Logs
+logs/
+*.log
+
+# Test coverage
+coverage.out
+coverage.html
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Go vendor
+vendor/
+
+# Configuration overrides
+config/local.yaml
+config/local.json
+config/local.toml
+
+# Runtime files
+*.pid
+
+# Test artifacts
+test_results.json
+traffic_results.json

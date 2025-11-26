@@ -1,0 +1,51 @@
+[
+  {
+    "name": "normal_browsing",
+    "weight": 50,
+    "method": "GET",
+    "path": "/",
+    "headers": {
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+    }
+  },
+  {
+    "name": "api_request",
+    "weight": 30,
+    "method": "GET",
+    "path": "/api/users",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": "Bearer token123"
+    }
+  },
+  {
+    "name": "health_check",
+    "weight": 10,
+    "method": "GET",
+    "path": "/health"
+  },
+  {
+    "name": "admin_attempt",
+    "weight": 5,
+    "method": "GET",
+    "path": "/admin/dashboard",
+    "user_agent": "AdminBot/1.0"
+  },
+  {
+    "name": "large_post",
+    "weight": 3,
+    "method": "POST",
+    "path": "/api/upload",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "body_size": 1048576
+  },
+  {
+    "name": "suspicious_scan",
+    "weight": 2,
+    "method": "GET",
+    "path": "/../../etc/passwd",
+    "user_agent": "BadBot/2.0"
+  }
+]
