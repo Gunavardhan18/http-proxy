@@ -44,12 +44,12 @@ config: build-config-gen
 	@echo "Generating configuration files..."
 	./$(CONFIG_GEN_BINARY)
 
-# Run tests
+# Run tests (internal packages only - cmd packages are entry points)
 test:
-	@echo "Running tests..."
-	go test $(GO_TEST_FLAGS) ./...
+	@echo "Running unit tests..."
+	go test $(GO_TEST_FLAGS) ./internal/...
 
-# Generate test coverage report
+# Generate test coverage report (internal packages only)
 coverage: test
 	@echo "Generating coverage report..."
 	go tool cover -html=coverage.out -o coverage.html

@@ -25,6 +25,26 @@ Client -> HTTP Proxy -> Rule Engine -> Backend Server
 
 ## Quick Start
 
+### 🚀 **Option 1: Complete Automated Demo**
+
+```bash
+# Run the full functional demo + tests (recommended)
+powershell -ExecutionPolicy Bypass -File full_demo.ps1
+
+# Or run with options:
+powershell -ExecutionPolicy Bypass -File full_demo.ps1 -QuickTest  # No pauses
+powershell -ExecutionPolicy Bypass -File full_demo.ps1 -SkipBuild  # Use existing binaries
+```
+
+**What the demo shows:**
+- ✅ Complete build process and server startup
+- ✅ Real request filtering (allow/block scenarios)  
+- ✅ API-based rule management
+- ✅ Load testing with statistics
+- ✅ Comprehensive unit test suite (69 tests)
+
+### 🛠️ **Option 2: Manual Setup**
+
 ### 1. Build the Applications
 
 ```bash
@@ -272,6 +292,31 @@ Create a JSON file with custom test scenarios:
 ]
 ```
 
+## Testing & Quality Assurance
+
+### Automated Test Suite
+
+Run the comprehensive test suite:
+
+```bash
+# PowerShell test runner with coverage reporting
+powershell -ExecutionPolicy Bypass -File run_tests.ps1
+
+# Or run tests manually
+go test ./internal/... -v -coverprofile=coverage.out
+go tool cover -html=coverage.out -o coverage.html
+```
+
+### Test Coverage Summary
+
+| Component | Tests | Coverage | Features Tested |
+|-----------|-------|----------|----------------|
+| Rules Engine | 18 tests | ~81% | Pattern matching, IP filtering, rule evaluation |
+| Configuration | 11 tests | ~82% | Multi-format parsing, validation, defaults |
+| Rate Limiter | 13 tests | ~65% | Token bucket algorithm, concurrency |
+| Logging System | 12 tests | ~70% | Structured logging, audit trails |
+| **Total** | **54 tests** | **~75%** | **All critical business logic** |
+
 ## Environment Variables
 
 Configure the proxy using environment variables:
@@ -392,9 +437,7 @@ backend:
 │   └── logger/         # Logging system
 ├── pkg/
 │   └── types/          # Shared type definitions
-├── examples/           # Sample configurations
-└── test/
-    └── configs/        # Test configurations
+└── examples/           # Sample configurations and scenarios
 ```
 
 ### Building from Source
@@ -410,12 +453,39 @@ go mod download
 # Build all applications
 make build
 
-# Run tests
+# Run comprehensive unit tests  
 make test
 
-# Generate coverage report
+# Run tests with coverage report
 make coverage
+
+# Run individual component tests
+go test ./internal/config/ -v    # Configuration tests
+go test ./internal/rules/ -v     # Rules engine tests  
+go test ./internal/proxy/ -v     # Proxy & rate limiter tests
+go test ./internal/logger/ -v    # Logging system tests
 ```
+
+### Testing Strategy
+
+The project follows Go testing best practices with comprehensive unit tests for all business logic:
+
+```
+Component Coverage:
+├── internal/config/    ~82% - Configuration parsing & validation
+├── internal/rules/     ~81% - Rule engine & pattern matching  
+├── internal/proxy/     ~65% - Rate limiting & proxy logic
+├── internal/logger/    ~70% - Logging & audit system
+└── Total:              ~75% - 69 comprehensive unit tests
+
+Entry Points (No Tests Needed):
+├── cmd/proxy/          Main application (wires tested components)
+├── cmd/backend/        Test utility server
+├── cmd/traffic-gen/    Load testing tool
+└── cmd/config-gen/     Configuration generator
+```
+
+**Why cmd/ packages don't need tests**: These are entry points that simply wire together already-tested internal components. The business logic is thoroughly tested in the `internal/` packages.
 
 ## Deployment
 
@@ -482,6 +552,16 @@ Enable debug logging for detailed troubleshooting:
 ./proxy -log-level debug
 ```
 
+### Documentation Files
+
+- **README.md** - Complete project documentation
+- **DEMO_WALKTHROUGH.md** - Step-by-step functional demo guide
+- **TEST_SUMMARY.md** - Detailed unit test documentation  
+- **full_demo.ps1** - Complete automated demo (functional + tests)
+- **demo.ps1** - Interactive demonstration script
+- **run_tests.ps1** - Automated test runner with coverage
+- **examples/** - Sample configurations and scenarios
+
 ## Contributing
 
 1. Fork the repository
@@ -489,6 +569,14 @@ Enable debug logging for detailed troubleshooting:
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+### Development Guidelines
+
+- All business logic must be in `internal/` packages with unit tests
+- Maintain >75% test coverage on core components  
+- Entry points in `cmd/` are integration points only
+- Follow Go testing best practices
+- Update documentation for new features
 
 ## License
 

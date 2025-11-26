@@ -1,8 +1,11 @@
 # HTTP Proxy Server Test Runner
-# Runs unit tests for all critical components
+# Runs unit tests for all critical business logic components
+# Note: cmd/ packages are entry points only and don't need unit tests
 
 Write-Host "HTTP Proxy Server - Unit Test Runner" -ForegroundColor Green
 Write-Host "====================================" -ForegroundColor Green
+Write-Host "Testing internal/ packages (business logic only)" -ForegroundColor Gray
+Write-Host "cmd/ packages are entry points and don't need unit tests" -ForegroundColor Gray
 Write-Host ""
 
 $TotalTests = 0

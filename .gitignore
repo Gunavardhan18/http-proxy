@@ -40,3 +40,5 @@ config/local.toml
 # Test artifacts
 test_results.json
 traffic_results.json
+*_test.json
+test_output.txt
